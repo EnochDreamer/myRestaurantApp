@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CreateNewMenu</title>
+</head>
+<body>
+    <p>
+        <h1>Create New Item</h1>
+    </p>
+    <form action="{{url_for('new_item',restaurant_id=restaurant_id)}}" method="POST">
+        <label >
+            Enter name
+            <input type="text" name="name" required>
+        </label>
+        <label>
+            Enter price
+        <input type="text" name="price" required>
+        </label>
+        <label>
+            Enter Description
+        <input type="text" name="description" required>
+        </label>
+        <label>
+            Enter Course
+        <input type="text" name="course" >
+        </label>
+        <br>
+        <br>
+
+        <button type="submit">submit</button>
+        
+    </form>
+</body>
+</html>

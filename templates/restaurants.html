@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Restaurants</title>
+    
+    <link rel="stylesheet" href="{{url_for('static', filename=('styles.css'))}}">
+    
+</head>
+<body>
+    <header >
+        <svg id="menu" xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M6 36V33H42V36ZM6 25.5V22.5H42V25.5ZM6 15V12H42V15Z"/></svg>
+        <div class="nav-wrapper">
+            <div class="link-wrapper">
+              <a href="#" class="active">Home</a>
+              <a  href="#" class="other">About</a>
+              <a  href="#" class="other">Contact Us</a>
+            </div>
+        </div>
+        <div id="overlay">
+
+        </div>
+
+
+
+        <form class="form" id="form" action="/restaurants/search/" method="POST">
+            <input id="searchkey" type="text" class="text" name="search" placeholder="Search Restaurant" required  >
+            <button type="submit" class="button"><svg xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M28.05 35.9 25.9 33.8 34.3 25.4H8V22.4H34.3L25.85 13.95L28 11.85L40.05 23.9Z"/></svg></button>
+        </form>
+    </header>
+    <section>
+        <div class="page">
+            <p>RESTAURANTS</p>
+            <div class="create">
+                <a href="{{url_for('new_restaurant')}}">Create new Restautant</a>
+            </div>
+            
+        </div>
+        
+        <hr>
+        <div class="flash">
+            {% with messages=get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <hr>
+            <h1><strong>{{message}}</strong></h1>
+            <hr>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+
+        </div>
+       
+        <div class="container">
+        {% for restaurant in restaurants %} 
+            <div class="item ">
+                <div class="name">
+                 <p>{{ restaurant.name }}</p>
+                </div> 
+                 
+                <div class="links">
+                     <a class="view" href="{{url_for('restaurantMenu',restaurant_id=restaurant.id)}}">View</a>
+                     <a class="edit" href="{{url_for('edit_restaurant',restaurant_id=restaurant.id)}}">Edit</a>
+                     <a class="delete" href="{{url_for('delete_restaurant',restaurant_id=restaurant.id)}}">Delete</a>
+                 
+                </div>
+                 
+            
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="search_result">
+            <ul>
+            
+            </ul>
+        </div>
+        
+        
+    </section>
+
+    <script src="{{url_for('static', filename=('scripts.js'))}}"></script>
+</body>
+</html>
