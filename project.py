@@ -1,27 +1,77 @@
-from flask import Flask,render_template,request ,redirect ,url_for , flash, jsonify
-
-app=Flask(__name__)
-
-
+from flask import g,Flask,render_template,request ,redirect ,url_for , flash, jsonify,abort
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker,scoped_session
 
-from database_setup import Restaurant, Base, MenuItem
+from database_setup import Restaurant, Base, MenuItem,User
+#fron flask.ext.httpauth import HTTPBasicAuth 
 
 engine = create_engine('sqlite:///restaurantmenu.db', connect_args={'check_same_thread': False}, echo=True)
 Base.metadata.bind = engine
 DBSession =sessionmaker(bind=engine)
 session = DBSession()
 
+app=Flask(__name__)
+
+# auth = HTTPBasicAuth()
+
+# @auth.verify_password
+# def verify_password(username,password):
+#     user=session.query(User).filter_by(username=username).one_or_none()
+#     if not (user or user.verify_password(password)):
+#         return False
+#     g.user=user
+#     return True
+
+
 
 
 
 @app.route('/')
-@app.route('/restaurants/')
-def homePage():
+@app.route('/restaurants/<user>')
+def homePage(user=False):
     restaurants=session.query(Restaurant).all()
-    return render_template('restaurants.html',restaurants=restaurants)
-       
+    return render_template('restaurants.html',restaurants=restaurants,user=user)
+
+@app.route('/sign-up',methods=["GET","POST"])
+def sign_up():
+    
+    if request.method=="GET":
+        return render_template('sign_up.html')
+    if request.method=="POST":
+        email=body=request.form["email"]
+        user_exists=session.query(User).filter_by(email=email).one_or_none()
+        if user_exists:
+            abort(400)
+        email=request.form.get("email")
+        password=request.form.get("password")
+        print(email,password)
+        user=User(email=email)
+        user.hash_password(password)
+        session.add(user)
+        session.commit()
+        return redirect(url_for("login"))
+
+
+
+    
+    
+
+@app.route('/login' , methods=["GET","POST"])
+def login():
+    if request.method == "GET":
+        return render_template('login.html')
+    if request.method == "POST":
+        email=request.form["email"]
+        password=request.form["password"]
+        user=session.query(User).filter_by(email=email).one_or_none()
+        if user is None:
+            abort(404)
+        if user.verify_password(password):
+            res = make_response(expression)
+            res.set_cookie('user', user.password_hash)
+            return res
+            
+            return redirect(url_for('homePage',user=user.format()))
 
 
 

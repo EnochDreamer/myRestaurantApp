@@ -134,21 +134,21 @@ body{
     font-size: 200%;
  }
  .view {
-  background-color: rgb(12, 112, 12);
+  background-color: rgb(10, 122, 94);
   color: rgb(253, 251, 251);
   padding: 15px;
   border-radius: 10px;
   
 }
 .edit{
-  background-color: rgb(204, 191, 8);
+  background-color: rgb(112, 104, 10);
   color: rgb(253, 251, 251);
   padding: 15px;
   border-radius: 10px;
 }
 
 .delete{
-  background-color: rgb(206, 9, 9);
+  background-color: brown;
   color: rgb(253, 251, 251);
   padding: 15px;
   border-radius: 10px;
@@ -186,7 +186,7 @@ body{
   position:fixed;
   top:0px;
   left: 0px;
-  background-color:rgb(10, 122, 94);;
+  background-color:rgb(10, 122, 94);
   z-index: 5;
   overflow: hidden;
   border-bottom-right-radius: 20px;
@@ -195,10 +195,10 @@ body{
   }
   
    
-   .page{
+  .page{
       display: flex;
       flex-direction: column;
-   }
+    }
    
   .page> p{
     display: flex;
@@ -210,7 +210,7 @@ body{
       .item{
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
+        justify-content: space-between;
         border: 1px grey solid;
      
      }
@@ -332,10 +332,12 @@ body{
 
    
 .links> a{
+  display: flex;
   text-decoration: none;
    width:24%;
    font-size:1.3em;
-   text-align:center;  
+   text-align:center;
+   justify-content: center;  
    margin: 0 15px;
    
 }
