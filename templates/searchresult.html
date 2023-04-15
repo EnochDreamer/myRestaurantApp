@@ -9,21 +9,33 @@
    
     <section>
     <center><h1>RESULTS</h1></center>
+    {% if user %}
+    <center><p>{{ user.email }}</p></center>
+    {% endif %}
+    
     {% for restaurant in restaurants %}
        {% if ((search_key).lower() in ((restaurant.name).lower()))  %}
     <div class="container">
         <div class="item ">
             <div class="name">
              <p>{{ restaurant.name }}</p>
-            </div> 
              
+            </div> 
+            
             <div class="links">
-                 <a class="view" href="{{url_for('restaurantMenu',restaurant_id=restaurant.id)}}">View</a>
+                {% if not user %}
+                <a class="view" href="{{url_for('public_menu_item',restaurant_id=restaurant.id)}}">View</a>
+                {% elif user %}
+                 <a class="view" href="{{url_for('restaurantMenu',restaurant_id=restaurant.id,user_id=user.id)}}">View</a>
+                 {% endif %}
+
+                 {% if user.admin %}
                  <a class="edit" href="{{url_for('edit_restaurant',restaurant_id=restaurant.id)}}">Edit</a>
                  <a class="delete" href="{{url_for('delete_restaurant',restaurant_id=restaurant.id)}}">Delete</a>
-             
+                {% endif %}
+                <p>Owned by: {{restaurant.user.email}}</p>
             </div>
-             
+            
         
         </div>
     </div>

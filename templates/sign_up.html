@@ -8,13 +8,14 @@
 </head>
 <body>
     <h2>Welcome to the sign-up page</h2>
-<form action="{{url_for('sign_up')}}" method="POST">
+<form action="{{url_for('sign_up')}}" method="POST" enctype="multipart/form-data"  >
 
 <label for="email">Enter Email</label>
 <input type="email"  id="email"  name="email">
 <label for="password">Your password</label>
 <input type="password"  id="password" name="password">
-
+<label for="file">Choose Profile picture</label>
+<input type="file" name="file" id="file" >
 <button type="submit">sign-up</button>
 </form>
 </body>

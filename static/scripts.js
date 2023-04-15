@@ -3,6 +3,8 @@ const overlay=document.getElementById('overlay')
 const link_wrapper=document.querySelector('.link-wrapper')
 const form=document.getElementById('form')
 const searchkey=document.getElementById('searchkey').value
+const item=document.querySelector('.item')
+
 
 form.onsubmit = function(e){
     console.log(e);
@@ -22,6 +24,10 @@ form.onsubmit = function(e){
         document.getElementById('error').className='hidden';
     
      })
+}
+
+item.onclick= function(e){
+    console.log(e);
 }
 
 let openmenu=false
@@ -46,7 +52,8 @@ menu.addEventListener('click', function(){
 })
 
 
-overlay.addEventListener('click', function(){
+overlay.addEventListener('click', function(e){
+    console.log(e)
     if (openmenu) {
         closingMenu()
     }

@@ -16,36 +16,42 @@
               <a href="#" class="active">Home</a>
               <a  href="#" class="other">About</a>
               <a  href="#" class="other">Contact Us</a>
+              {% if user %}
+               <a class="other" href="{{url_for('new_restaurant')}}">New Restautant</a>
+              {% endif %}
               {% if not user  %}
-              <a href="{{url_for('login')}}">Login</a>
-              <a href="{{url_for('sign_up')}}">sign-up</a>
+              <a class="other" href="{{url_for('login')}}">Login</a>
+              <a class="other" href="{{url_for('sign_up')}}">sign-up</a>
               {% elif user %}
-              <a href="{{url_for('homePage')}}">Logout</a>
+              <a class="other" href="//log:out@localhost:5000/login">Logout</a>
+              <a class="other" href="#">{{ user.email }}</a>
+              <img src="../{{user.image}}" alt="profile pics" height="55" width="55" style="position: absolute;right:0vw;top: 0vh;border-radius: 50px;">
+        
+              
               {% endif %}
             </div>
         </div>
         <div id="overlay">
 
         </div>
-
-
-
-        <form class="form" id="form" action="/restaurants/search/" method="POST">
+        {% if not user %}
+        <form class="form" id="form" action="{{url_for('search_result',user_id=0)}}" method="POST">
             <input id="searchkey" type="text" class="text" name="search" placeholder="Search Restaurant" required  >
             <button type="submit" class="button"><svg xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M28.05 35.9 25.9 33.8 34.3 25.4H8V22.4H34.3L25.85 13.95L28 11.85L40.05 23.9Z"/></svg></button>
         </form>
+        {% elif user %}
+        <form class="form" id="form" action="{{url_for('search_result',user_id=user.id)}}" method="POST">
+            <input id="searchkey" type="text" class="text" name="search" placeholder="Search Restaurant" required  >
+            <button type="submit" class="button"><svg xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="M28.05 35.9 25.9 33.8 34.3 25.4H8V22.4H34.3L25.85 13.95L28 11.85L40.05 23.9Z"/></svg></button>
+        </form>
+        {% endif %}
     </header>
     <section>
         <div class="page">
             <p>RESTAURANTS</p>
-            {% if user %}
-            <div class="create">
-                <a href="{{url_for('new_restaurant')}}">Create new Restautant</a>
-            </div>
-            {% endif %}
         </div>
         
-        <hr>
+
         <div class="flash">
             {% with messages=get_flashed_messages() %}
             {% if messages %}
@@ -62,20 +68,27 @@
        
         <div class="container">
         {% for restaurant in restaurants %} 
-            <div class="item ">
+            <div class="item " data-id="{{restaurant.id}}" >
                 <div class="name">
                  <p>{{ restaurant.name }}</p>
                 </div> 
                  
+                
                 <div class="links">
-                     <a class="view" href="{{url_for('restaurantMenu',restaurant_id=restaurant.id)}}">View</a>
-                     {% if user %}
-                     <a class="edit" href="{{url_for('edit_restaurant',restaurant_id=restaurant.id)}}">Edit</a>
+                    {% if not user %}
+                    <a class="view" href="{{url_for('public_menu_item',restaurant_id=restaurant.id)}}">View</a>
+                    {% elif user %}
+                     <a class="view" href="{{url_for('restaurantMenu',restaurant_id=restaurant.id,user_id=user.id)}}">View</a>
+                     {% endif %}
+                      
+                      {% if (restaurant.user==user or user.admin) %}
+                       <a class="edit" href="{{url_for('edit_restaurant',restaurant_id=restaurant.id)}}">Edit</a>
                      <a class="delete" href="{{url_for('delete_restaurant',restaurant_id=restaurant.id)}}">Delete</a>
                     {% endif %}
                 </div>
-                 
-            
+                <div class="owner">
+                    <a href="#">Owned by: {{restaurant.user.email}}</a>
+                </div>
             </div>
             {% endfor %}
         </div>
