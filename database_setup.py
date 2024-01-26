@@ -2,20 +2,26 @@ import sys
 from flask_sqlalchemy import SQLAlchemy
 from passlib.apps import custom_app_context as pwd_context
 import os
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from uuid import uuid4
+from dotenv import load_dotenv
 
+load_dotenv()
+if 'RDS_HOSTNAME' in os.environ:
+    db_host=os.environ.get('RDS_HOSTNAME')
+    db_port=os.environ.get('RDS_PORT')
+    db_name=os.environ.get('RDS_DB_NAME')
+    db_username=os.environ.get('RDS_USERNAME')
+    db_password=os.environ.get('RDS_PASSWORD')
+    database_path=f'postgresql://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}'
 db=SQLAlchemy()
-
-database_path='postgresql://postgres:Enochgenius7@localhost:5432/restaurant'
-def db_setup(app,Migrate,database_path=database_path,db=db):
+def db_setup(app,database_path=database_path,db=db):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SECRET_KEY"]="jkrejkvjhkgvhvjh"
     db.app = app
     db.init_app(app)
-    migrate=Migrate(app,db)
+    with app.app_context():
+        db.create_all()
     return db
 
 class User(db.Model):

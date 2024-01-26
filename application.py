@@ -1,15 +1,13 @@
-from flask import g,Flask,render_template,request ,redirect ,url_for , flash, jsonify,abort
+from flask import Flask,render_template,request ,redirect ,url_for , flash, jsonify,abort,g
 from sqlalchemy import create_engine
 from database_setup import db_setup
 from database_setup import Restaurant, MenuItem,User
 from flask_httpauth import HTTPBasicAuth 
 from ast import literal_eval
-from flask_migrate import Migrate
 
 
-app=Flask(__name__)
-db=db_setup(app,Migrate)
-
+application=Flask(__name__)
+db=db_setup(application)
 auth = HTTPBasicAuth()
 
 
@@ -48,8 +46,8 @@ def verify_password(email,password):
 
 
 
-@app.route('/')
-@app.route('/restaurants/<int:user_id>')
+@application.route('/')
+@application.route('/restaurants/<int:user_id>')
 def homePage(user_id=None):
     print(" user_id type is",type(user_id))
     restaurants=db.session.query(Restaurant).all()
@@ -61,7 +59,7 @@ def homePage(user_id=None):
     
     
 
-@app.route('/restaurants/sign-up',methods=["GET","POST"])
+@application.route('/restaurants/sign-up',methods=["GET","POST"])
 def sign_up():
     if request.method=="GET":
         return render_template('sign_up.html')
@@ -85,7 +83,7 @@ def sign_up():
     
 
 
-@app.route('/login' , methods=["GET","POST"])
+@application.route('/login' , methods=["GET","POST"])
 @auth.login_required
 def login():
     # if request.method == "GET":
@@ -102,7 +100,7 @@ def login():
 
 
 
-@app.route('/restaurants/<int:restaurant_id>/<int:user_id>/',methods=["GET"])
+@application.route('/restaurants/<int:restaurant_id>/<int:user_id>/',methods=["GET"])
 def restaurantMenu(restaurant_id,user_id):
     restaurant=db.session.query(Restaurant).filter_by(id=restaurant_id).one_or_none()
     user=db.session.query(User).filter_by(id=user_id).one_or_none()
@@ -110,13 +108,13 @@ def restaurantMenu(restaurant_id,user_id):
 
 
 
-@app.route('/restaurants/<int:restaurant_id>/')
+@application.route('/restaurants/<int:restaurant_id>/')
 def public_menu_item(restaurant_id):
     restaurant=db.session.query(Restaurant).filter_by(id=restaurant_id).one_or_none()
     return render_template('public_menu_item.html', restaurant=restaurant)
 
 
-@app.route('/restaurants/<int:restaurant_id>/new/', methods=['GET','POST'])
+@application.route('/restaurants/<int:restaurant_id>/new/', methods=['GET','POST'])
 @auth.login_required
 def new_item(restaurant_id):
     if request.method == 'POST':
@@ -134,7 +132,7 @@ def new_item(restaurant_id):
         else:
             abort(403)
     
-@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/edit/',methods=['GET','POST'])
+@application.route('/restaurants/<int:restaurant_id>/<int:menu_id>/edit/',methods=['GET','POST'])
 @auth.login_required
 def edit_item(restaurant_id,menu_id):
     item=db.session.query(MenuItem).filter_by(restaurant_id=restaurant_id,id=menu_id).one_or_none()
@@ -158,7 +156,7 @@ def edit_item(restaurant_id,menu_id):
         else:
             abort(403)
 
-@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete/', methods=['GET','POST'])
+@application.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete/', methods=['GET','POST'])
 @auth.login_required
 def delete_item(restaurant_id,menu_id):
     item= db.session.query(MenuItem).filter_by(restaurant_id=restaurant_id,id=menu_id).one_or_none()
@@ -176,7 +174,7 @@ def delete_item(restaurant_id,menu_id):
             return render_template('deletemenuitem.html',restaurant_id=restaurant_id,item=item,user=user)
         else:
             abort(403)
-@app.route('/restaurants/new' , methods=['GET','POST'])
+@application.route('/restaurants/new' , methods=['GET','POST'])
 @auth.login_required
 def new_restaurant():
     if request.method=='POST':
@@ -191,7 +189,7 @@ def new_restaurant():
         return render_template('newrestaurants.html',user=user)
 
 
-@app.route('/restaurants/<int:restaurant_id>/edit' , methods=['GET','POST'])
+@application.route('/restaurants/<int:restaurant_id>/edit' , methods=['GET','POST'])
 @auth.login_required
 def edit_restaurant(restaurant_id):
     restaurant=db.session.query(Restaurant).filter_by(id=restaurant_id).one_or_none()
@@ -213,7 +211,7 @@ def edit_restaurant(restaurant_id):
         
 
 
-@app.route('/restaurants/<int:restaurant_id>/delete' , methods=['GET','POST'])
+@application.route('/restaurants/<int:restaurant_id>/delete' , methods=['GET','POST'])
 @auth.login_required
 def delete_restaurant(restaurant_id):
     restaurant=db.session.query(Restaurant).filter_by(id=restaurant_id).one_or_none()
@@ -233,7 +231,7 @@ def delete_restaurant(restaurant_id):
             abort (403)
 
 
-@app.route('/restaurants/search/<int:user_id>/' , methods=['POST'])
+@application.route('/restaurants/search/<int:user_id>/' , methods=['POST'])
 def search_result(user_id):
     restaurants=db.session.query(Restaurant).all()
     search_key =request.form['search']
@@ -253,7 +251,7 @@ def search_result(user_id):
     return render_template('searchresult.html', restaurants=restaurants,search_key=search_key,user=user) 
      
           
-@app.route('/restaurants/<int:restaurant_id>/menu_items/json',methods=['GET'])
+@application.route('/restaurants/<int:restaurant_id>/menu_items/json',methods=['GET'])
 def allMenuJson(restaurant_id):
     menu_items=db.session.query(MenuItem).filter_by(restaurant_id=restaurant_id).all()
     return jsonify(
@@ -261,7 +259,7 @@ def allMenuJson(restaurant_id):
     )
 
         
-@app.route('/logout')
+@application.route('/logout')
 #@auth.login_required
 def logout():
     return (url_for('homePage'))
@@ -272,6 +270,6 @@ def logout():
 
 
 if __name__=='__main__':
-    app.secret_key='secret key'
-    app.debug=True
-    app.run() 
+    application.secret_key='secret key'
+    application.debug=True
+    application.run() 
