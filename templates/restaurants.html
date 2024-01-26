@@ -23,7 +23,7 @@
               <a class="other" href="{{url_for('login')}}">Login</a>
               <a class="other" href="{{url_for('sign_up')}}">sign-up</a>
               {% elif user %}
-              <a class="other" href="//log:out@localhost:5000/login">Logout</a>
+              <a class="other" href="//log:out@{{url_for('logout')}}">Logout</a>
               <a class="other" href="#">{{ user.email }}</a>
               <img src="../{{user.image}}" alt="profile pics" height="55" width="55" style="position: absolute;right:0vw;top: 0vh;border-radius: 50px;">
         
